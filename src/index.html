@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HOD MVP – Structured Decisions</title>
+  <title>HOD MVP – Q4 Workbench</title>
   <link rel="stylesheet" href="./styles.css"/>
 </head>
 <body>
   <header>
-    <h1>Human Oriented Design – MVP Workbench</h1>
+    <h1>Human Oriented Design – Q4 Workbench</h1>
     <p class="subtitle">Frame → Compare → Decide → Learn</p>
   </header>
 
   <section class="grid two">
     <div class="card">
       <h2>Problem & Outcomes</h2>
-      <label>Problem <textarea id="problem" placeholder="e.g., Reduce build times for the analytics app"></textarea></label>
-      <label>Outcomes (metrics + targets) <textarea id="outcomes" placeholder="p95_build_time < 6m; release cadence weekly"></textarea></label>
-      <label>Constraints <textarea id="constraints" placeholder="$5k/mo infra cap; must keep on-prem data"></textarea></label>
-      <label>Assumptions (+confidence 0–1) <textarea id="assumptions" placeholder="Remote cache persists across CI (0.6)"></textarea></label>
+      <label>Problem <textarea id="problem"></textarea></label>
+      <label>Outcomes (metrics + targets) <textarea id="outcomes"></textarea></label>
+      <label>Constraints <textarea id="constraints"></textarea></label>
+      <label>Assumptions (+confidence 0–1) <textarea id="assumptions"></textarea></label>
     </div>
 
     <div class="card">
@@ -28,6 +28,13 @@
         <tbody></tbody>
       </table>
       <button id="addCriteria">+ Add criterion</button>
+
+      <div class="whatif">
+        <h3>What‑If Weights</h3>
+        <p class="hint">Adjust temporary weights below to explore sensitivity (auto-normalized).</p>
+        <div id="whatIfSliders"></div>
+        <button id="resetWhatIf">Reset What‑If</button>
+      </div>
     </div>
   </section>
 
@@ -45,17 +52,45 @@
       <h2>Compute & Results</h2>
       <button id="computeBtn">Compute Ranking</button>
       <div id="results"></div>
+      <div class="adr">
+        <h3>ADR Export</h3>
+        <button id="exportAdrBtn">Export ADR (Markdown)</button>
+        <div id="adrStatus"></div>
+      </div>
     </div>
+
     <div class="card">
-      <h2>Persistence</h2>
+      <h2>Persistence & Snapshots</h2>
       <button id="saveBtn">Save</button>
       <button id="loadBtn">Load</button>
+      <button id="snapshotBtn">Create Snapshot</button>
       <div id="status"></div>
+      <div id="snapshots"></div>
+    </div>
+  </section>
+
+  <section class="grid two">
+    <div class="card">
+      <h2>Experiments Board</h2>
+      <table id="experimentsTable" class="table">
+        <thead><tr><th>Hypothesis</th><th>Metric</th><th>Threshold</th><th>Status</th><th>Result</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button id="addExperiment">+ Add experiment</button>
+    </div>
+
+    <div class="card">
+      <h2>Evidence</h2>
+      <table id="evidenceTable" class="table">
+        <thead><tr><th>Title</th><th>URL/Ref</th><th>Supports?</th><th>Confidence (0–1)</th><th>Notes</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button id="addEvidence">+ Add evidence</button>
     </div>
   </section>
 
   <footer>
-    <p>Local-first. No TypeScript. Simple Additive Weighting. v0.1</p>
+    <p>Local-first. No TypeScript. Q4 features: ADR, What-if, Experiments, Evidence, Snapshots.</p>
   </footer>
 
   <script src="./renderer.js"></script>
