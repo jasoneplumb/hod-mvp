@@ -1,0 +1,5 @@
+node_modules
+HOD-MVP-*
+dist
+.DS_Store
+*.log

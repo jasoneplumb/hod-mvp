@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HOD MVP – Structured Decisions</title>
+  <link rel="stylesheet" href="./styles.css"/>
+</head>
+<body>
+  <header>
+    <h1>Human Oriented Design – MVP Workbench</h1>
+    <p class="subtitle">Frame → Compare → Decide → Learn</p>
+  </header>
+
+  <section class="grid two">
+    <div class="card">
+      <h2>Problem & Outcomes</h2>
+      <label>Problem <textarea id="problem" placeholder="e.g., Reduce build times for the analytics app"></textarea></label>
+      <label>Outcomes (metrics + targets) <textarea id="outcomes" placeholder="p95_build_time < 6m; release cadence weekly"></textarea></label>
+      <label>Constraints <textarea id="constraints" placeholder="$5k/mo infra cap; must keep on-prem data"></textarea></label>
+      <label>Assumptions (+confidence 0–1) <textarea id="assumptions" placeholder="Remote cache persists across CI (0.6)"></textarea></label>
+    </div>
+
+    <div class="card">
+      <h2>Criteria (3–6)</h2>
+      <table id="criteriaTable" class="table">
+        <thead><tr><th>Name</th><th>Weight (%)</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button id="addCriteria">+ Add criterion</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Options</h2>
+    <table id="optionsTable" class="table">
+      <thead><tr><th>Name</th><th>Scores per Criterion (1–5)</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button id="addOption">+ Add option</button>
+  </section>
+
+  <section class="grid two">
+    <div class="card">
+      <h2>Compute & Results</h2>
+      <button id="computeBtn">Compute Ranking</button>
+      <div id="results"></div>
+    </div>
+    <div class="card">
+      <h2>Persistence</h2>
+      <button id="saveBtn">Save</button>
+      <button id="loadBtn">Load</button>
+      <div id="status"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Local-first. No TypeScript. Simple Additive Weighting. v0.1</p>
+  </footer>
+
+  <script src="./renderer.js"></script>
+</body>
+</html>
