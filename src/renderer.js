@@ -27,9 +27,9 @@ let whatIfWeights = null;
 function addCriterionRow(name='', weight=0) {
   const tr = document.createElement('tr');
   tr.innerHTML = `
-    <td><input type="text" class="crit-name" placeholder="e.g., Info Gain" value="${name}"></td>
-    <td><input type="number" class="crit-weight" min="0" max="100" step="1" value="${weight}"></td>
-    <td><button class="del">Delete</button></td>`;
+    <td><input type="text" class="crit-name tooltip" data-tooltip="Name of evaluation criterion" placeholder="e.g., Info Gain" value="${name}"></td>
+    <td><input type="number" class="crit-weight tooltip" data-tooltip="Relative importance (0-100)" min="0" max="100" step="1" value="${weight}"></td>
+    <td><button class="del tooltip" data-tooltip="Remove this criterion">Delete</button></td>`;
   tr.querySelector('.del').onclick = () => { tr.remove(); renderOptionScores(); renderWhatIf(); };
   criteriaBody.appendChild(tr);
 }
@@ -44,9 +44,9 @@ function currentCriteria() {
 function addOptionRow(name='') {
   const tr = document.createElement('tr');
   tr.innerHTML = `
-    <td><input type="text" class="opt-name" placeholder="Option name" value="${name}"></td>
+    <td><input type="text" class="opt-name tooltip" data-tooltip="Name of solution option" placeholder="Option name" value="${name}"></td>
     <td class="scores"></td>
-    <td><button class="del">Delete</button></td>`;
+    <td><button class="del tooltip" data-tooltip="Remove this option">Delete</button></td>`;
   tr.querySelector('.del').onclick = () => tr.remove();
   optionsBody.appendChild(tr);
   renderOptionScores();
@@ -70,7 +70,7 @@ function renderOptionScores() {
     cell.innerHTML = '';
     crits.forEach(c => {
       const wrap = document.createElement('div');
-      wrap.innerHTML = `<label>${c.name} <input type="number" class="score" data-crit="${c.name}" min="0" max="5" step="1" value="0"></label>`;
+      wrap.innerHTML = `<label class="tooltip" data-tooltip="Rate this option on ${c.name} (1=poor, 5=excellent)">${c.name} <input type="number" class="score" data-crit="${c.name}" min="0" max="5" step="1" value="0"></label>`;
       cell.appendChild(wrap);
     });
   });
@@ -80,18 +80,18 @@ function renderOptionScores() {
 function addExperimentRow(ex={hypothesis:'',metric:'',threshold:'',status:'Planned',result:''}) {
   const tr = document.createElement('tr');
   tr.innerHTML = `
-    <td><input type="text" class="ex-hyp" placeholder="Hypothesis" value="${ex.hypothesis||''}"></td>
-    <td><input type="text" class="ex-metric" placeholder="Metric" value="${ex.metric||''}"></td>
-    <td><input type="text" class="ex-threshold" placeholder="Threshold" value="${ex.threshold||''}"></td>
+    <td><input type="text" class="ex-hyp tooltip" data-tooltip="Testable hypothesis statement" placeholder="Hypothesis" value="${ex.hypothesis||''}"></td>
+    <td><input type="text" class="ex-metric tooltip" data-tooltip="How you'll measure success" placeholder="Metric" value="${ex.metric||''}"></td>
+    <td><input type="text" class="ex-threshold tooltip" data-tooltip="Success criteria (e.g., '>50%', '<2 sec')" placeholder="Threshold" value="${ex.threshold||''}"></td>
     <td>
-      <select class="ex-status">
+      <select class="ex-status tooltip" data-tooltip="Current experiment status">
         <option ${ex.status==='Planned'?'selected':''}>Planned</option>
         <option ${ex.status==='Running'?'selected':''}>Running</option>
         <option ${ex.status==='Done'?'selected':''}>Done</option>
       </select>
     </td>
-    <td><input type="text" class="ex-result" placeholder="Result notes" value="${ex.result||''}"></td>
-    <td><button class="del">Delete</button></td>
+    <td><input type="text" class="ex-result tooltip" data-tooltip="Actual results and observations" placeholder="Result notes" value="${ex.result||''}"></td>
+    <td><button class="del tooltip" data-tooltip="Remove this experiment">Delete</button></td>
   `;
   tr.querySelector('.del').onclick = () => tr.remove();
   experimentsBody.appendChild(tr);
@@ -111,17 +111,17 @@ function currentExperiments() {
 function addEvidenceRow(ev={title:'',url:'',supports:true,confidence:'',notes:''}) {
   const tr = document.createElement('tr');
   tr.innerHTML = `
-    <td><input type="text" class="ev-title" placeholder="Title" value="${ev.title||''}"></td>
-    <td><input type="text" class="ev-url" placeholder="URL or ref" value="${ev.url||''}"></td>
+    <td><input type="text" class="ev-title tooltip" data-tooltip="Brief title for this evidence" placeholder="Title" value="${ev.title||''}"></td>
+    <td><input type="text" class="ev-url tooltip" data-tooltip="Link or reference to source" placeholder="URL or ref" value="${ev.url||''}"></td>
     <td>
-      <select class="ev-supports">
+      <select class="ev-supports tooltip" data-tooltip="Does this evidence support or refute your hypothesis?">
         <option value="true" ${ev.supports!==false?'selected':''}>supports</option>
         <option value="false" ${ev.supports===false?'selected':''}>refutes</option>
       </select>
     </td>
-    <td><input type="number" class="ev-conf" min="0" max="1" step="0.1" value="${ev.confidence ?? ''}"></td>
-    <td><input type="text" class="ev-notes" placeholder="Notes" value="${ev.notes||''}"></td>
-    <td><button class="del">Delete</button></td>
+    <td><input type="number" class="ev-conf tooltip" data-tooltip="How confident are you in this evidence? (0.0-1.0)" min="0" max="1" step="0.1" value="${ev.confidence ?? ''}"></td>
+    <td><input type="text" class="ev-notes tooltip" data-tooltip="Additional context or observations" placeholder="Notes" value="${ev.notes||''}"></td>
+    <td><button class="del tooltip" data-tooltip="Remove this evidence">Delete</button></td>
   `;
   tr.querySelector('.del').onclick = () => tr.remove();
   evidenceBody.appendChild(tr);
