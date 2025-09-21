@@ -4,8 +4,8 @@ const fs = require('fs');
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 1100,
-    height: 800,
+    width: 1200,
+    height: 860,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -13,13 +13,11 @@ function createWindow () {
       sandbox: true
     }
   });
-
   win.loadFile(path.join(__dirname, 'src', 'index.html'));
 }
 
 app.whenReady().then(() => {
   createWindow();
-
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
@@ -29,7 +27,6 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// Storage helpers
 const dataFile = path.join(app.getPath('userData'), 'decisions.json');
 
 ipcMain.handle('storage:save', async (_event, payload) => {
@@ -47,6 +44,18 @@ ipcMain.handle('storage:load', async () => {
     if (!fs.existsSync(dataFile)) return { ok: true, data: null, path: dataFile };
     const text = fs.readFileSync(dataFile, 'utf-8');
     return { ok: true, data: JSON.parse(text), path: dataFile };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+});
+
+ipcMain.handle('export:adr', async (_event, { markdown }) => {
+  try {
+    const dir = app.getPath('userData');
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const file = path.join(dir, `decision-ADR-${ts}.md`);
+    fs.writeFileSync(file, markdown, 'utf-8');
+    return { ok: true, path: file };
   } catch (e) {
     return { ok: false, error: e.message };
   }
