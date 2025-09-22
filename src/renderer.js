@@ -63,6 +63,22 @@ function currentOptions() {
   }).filter(Boolean);
 }
 
+function getCriterionTooltip(criterionName) {
+  const tooltips = {
+    "Info Gain": "How much new learning or insights will this provide?",
+    "Speed to Insight": "How quickly will this help reach decisions?",
+    "Risk Coverage": "How well does this address potential risks?",
+    "Feasibility": "How practical and achievable is this option?",
+    "Signal Quality": "How reliable and clear are the signals this provides?",
+    "User Experience": "How intuitive and pleasant is this for users?",
+    "Technical Debt": "How much complexity or maintenance burden does this add?",
+    "Cost": "What are the resource requirements for this option?",
+    "Scalability": "How well will this work as usage grows?",
+    "Security": "How well does this protect against threats?"
+  };
+  return tooltips[criterionName] || `Score how well this option performs on ${criterionName} (0-5 scale)`;
+}
+
 function renderOptionScores() {
   const crits = currentCriteria();
   Array.from(optionsBody.querySelectorAll('tr')).forEach(tr => {
@@ -70,7 +86,7 @@ function renderOptionScores() {
     cell.innerHTML = '';
     crits.forEach(c => {
       const wrap = document.createElement('div');
-      wrap.innerHTML = `<label class="tooltip" data-tooltip="Rate this option on ${c.name} (1=poor, 5=excellent)">${c.name} <input type="number" class="score" data-crit="${c.name}" min="0" max="5" step="1" value="0"></label>`;
+      wrap.innerHTML = `<label class="tooltip" data-tooltip="${getCriterionTooltip(c.name)}">${c.name} <input type="number" class="score" data-crit="${c.name}" min="0" max="5" step="1" value="0"></label>`;
       cell.appendChild(wrap);
     });
   });
