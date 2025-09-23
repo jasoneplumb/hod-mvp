@@ -24,17 +24,10 @@
     <div class="card">
       <h2>Criteria (3–6)</h2>
       <table id="criteriaTable" class="table">
-        <thead><tr><th>Name</th><th>Weight (%)</th><th></th></tr></thead>
+        <thead><tr><th>Name</th><th>Weight (%)</th><th>Explanation</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
       <button id="addCriteria" class="tooltip" data-tooltip="Add evaluation criteria (aim for 3-6 total)">+ Add criterion</button>
-
-      <div class="whatif">
-        <h3>What‑If Weights</h3>
-        <p class="hint tooltip tooltip-multiline" data-tooltip="Test how changing weights affects rankings. Weights are automatically normalized to 100%.">Adjust temporary weights below to explore sensitivity (auto-normalized).</p>
-        <div id="whatIfSliders"></div>
-        <button id="resetWhatIf" class="tooltip" data-tooltip="Return to original criterion weights">Reset What‑If</button>
-      </div>
     </div>
   </section>
 
@@ -52,6 +45,14 @@
       <h2>Compute & Results</h2>
       <button id="computeBtn" class="tooltip tooltip-multiline" data-tooltip="Calculate weighted scores using Simple Additive Weighting (SAW) method">Compute Ranking</button>
       <div id="results"></div>
+
+      <div class="whatif">
+        <h3>What‑If Weights</h3>
+        <p class="hint tooltip tooltip-multiline" data-tooltip="Test how changing weights affects rankings. Weights are automatically normalized to 100%.">Adjust temporary weights below to explore sensitivity (auto-normalized).</p>
+        <div id="whatIfSliders"></div>
+        <button id="resetWhatIf" class="tooltip" data-tooltip="Return to original criterion weights">Reset What‑If</button>
+      </div>
+
       <div class="adr">
         <h3>ADR Export</h3>
         <button id="exportAdrBtn" class="tooltip tooltip-multiline" data-tooltip="Generate Architecture Decision Record in Markdown format for documentation">Export ADR (Markdown)</button>
