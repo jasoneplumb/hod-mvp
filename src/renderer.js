@@ -24,12 +24,35 @@ const snapshotBtn = document.getElementById('snapshotBtn');
 
 let whatIfWeights = null;
 
-function addCriterionRow(name='', weight=0) {
+function addCriterionRow(name='', weight=0, explanation='') {
   const tr = document.createElement('tr');
   tr.innerHTML = `
     <td><input type="text" class="crit-name tooltip" data-tooltip="Name of evaluation criterion" placeholder="e.g., Info Gain" value="${name}"></td>
     <td><input type="number" class="crit-weight tooltip" data-tooltip="Relative importance (0-100)" min="0" max="100" step="1" value="${weight}"></td>
+    <td><input type="text" class="crit-explanation tooltip" data-tooltip="Explanation of what this criterion measures" placeholder="How to evaluate this criterion" value="${explanation}"></td>
     <td><button class="del tooltip" data-tooltip="Remove this criterion">Delete</button></td>`;
+
+  // Add event listeners to update tooltips and GUI when name, weight, or explanation changes
+  const nameInput = tr.querySelector('.crit-name');
+  const weightInput = tr.querySelector('.crit-weight');
+  const explanationInput = tr.querySelector('.crit-explanation');
+
+  const updateTooltips = () => {
+    updateOptionScoreTooltips();
+  };
+
+  const updateGUI = () => {
+    renderOptionScores();
+    renderWhatIf();
+  };
+
+  nameInput.addEventListener('input', () => {
+    updateTooltips();
+    updateGUI();
+  });
+  weightInput.addEventListener('input', renderWhatIf);
+  explanationInput.addEventListener('input', updateTooltips);
+
   tr.querySelector('.del').onclick = () => { tr.remove(); renderOptionScores(); renderWhatIf(); };
   criteriaBody.appendChild(tr);
 }
@@ -37,7 +60,8 @@ function addCriterionRow(name='', weight=0) {
 function currentCriteria() {
   return Array.from(criteriaBody.querySelectorAll('tr')).map(tr => ({
     name: tr.querySelector('.crit-name').value.trim(),
-    weight: Number(tr.querySelector('.crit-weight').value || 0)
+    weight: Number(tr.querySelector('.crit-weight').value || 0),
+    explanation: tr.querySelector('.crit-explanation').value.trim()
   })).filter(c => c.name);
 }
 
@@ -63,20 +87,15 @@ function currentOptions() {
   }).filter(Boolean);
 }
 
-function getCriterionTooltip(criterionName) {
-  const tooltips = {
-    "Info Gain": "How much new learning or insights will this provide?",
-    "Speed to Insight": "How quickly will this help reach decisions?",
-    "Risk Coverage": "How well does this address potential risks?",
-    "Feasibility": "How practical and achievable is this option?",
-    "Signal Quality": "How reliable and clear are the signals this provides?",
-    "User Experience": "How intuitive and pleasant is this for users?",
-    "Technical Debt": "How much complexity or maintenance burden does this add?",
-    "Cost": "What are the resource requirements for this option?",
-    "Scalability": "How well will this work as usage grows?",
-    "Security": "How well does this protect against threats?"
-  };
-  return tooltips[criterionName] || `Score how well this option performs on ${criterionName} (0-5 scale)`;
+function getCriterionTooltip(criterion) {
+  if (typeof criterion === 'string') {
+    // Legacy support - find criterion by name
+    const criteria = currentCriteria();
+    const found = criteria.find(c => c.name === criterion);
+    return found?.explanation || `Score how well this option performs on ${criterion} (0-5 scale)`;
+  }
+  // New usage - criterion object with explanation
+  return criterion.explanation || `Score how well this option performs on ${criterion.name} (0-5 scale)`;
 }
 
 function renderOptionScores() {
@@ -86,8 +105,23 @@ function renderOptionScores() {
     cell.innerHTML = '';
     crits.forEach(c => {
       const wrap = document.createElement('div');
-      wrap.innerHTML = `<label class="tooltip" data-tooltip="${getCriterionTooltip(c.name)}">${c.name} <input type="number" class="score" data-crit="${c.name}" min="0" max="5" step="1" value="0"></label>`;
+      wrap.innerHTML = `<label class="tooltip" data-tooltip="${getCriterionTooltip(c)}">${c.name} <input type="number" class="score" data-crit="${c.name}" min="0" max="5" step="1" value="0"></label>`;
       cell.appendChild(wrap);
+    });
+  });
+}
+
+function updateOptionScoreTooltips() {
+  const crits = currentCriteria();
+  Array.from(optionsBody.querySelectorAll('tr')).forEach(tr => {
+    const scoreInputs = tr.querySelectorAll('.score');
+    scoreInputs.forEach(input => {
+      const critName = input.dataset.crit;
+      const criterion = crits.find(c => c.name === critName);
+      if (criterion) {
+        const label = input.parentElement;
+        label.setAttribute('data-tooltip', getCriterionTooltip(criterion));
+      }
     });
   });
 }
@@ -206,7 +240,7 @@ function populateUI(model) {
   document.getElementById('constraints').value = model.constraints || '';
   document.getElementById('assumptions').value = model.assumptions || '';
   criteriaBody.innerHTML = '';
-  (model.criteria || []).forEach(c => addCriterionRow(c.name, c.weight));
+  (model.criteria || []).forEach(c => addCriterionRow(c.name, c.weight, c.explanation));
   optionsBody.innerHTML = '';
   (model.options || []).forEach(o => addOptionRow(o.name));
   renderOptionScores();
@@ -399,11 +433,11 @@ window.addEventListener('DOMContentLoaded', () => {
     constraints: "JavaScript only; local-first; small scope",
     assumptions: "Teams will adopt a lightweight ADR if exported in 2 clicks (0.6)",
     criteria: [
-      { name: "Info Gain", weight: 30 },
-      { name: "Speed to Insight", weight: 20 },
-      { name: "Risk Coverage", weight: 20 },
-      { name: "Feasibility", weight: 15 },
-      { name: "Signal Quality", weight: 15 }
+      { name: "Info Gain", weight: 30, explanation: "How much new learning or insights will this provide?" },
+      { name: "Speed to Insight", weight: 20, explanation: "How quickly will this help reach decisions?" },
+      { name: "Risk Coverage", weight: 20, explanation: "How well does this address potential risks?" },
+      { name: "Feasibility", weight: 15, explanation: "How practical and achievable is this option?" },
+      { name: "Signal Quality", weight: 15, explanation: "How reliable and clear are the signals this provides?" }
     ],
     options: [
       { name: "ADR One-Pager Export",       scores: { "Info Gain": 4, "Speed to Insight": 5, "Risk Coverage": 3, "Feasibility": 5, "Signal Quality": 4 } },
